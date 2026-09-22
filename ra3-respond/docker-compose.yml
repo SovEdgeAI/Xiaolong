@@ -1,0 +1,87 @@
+services:
+  db:
+    image: postgres:16
+    container_name: ra3-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ra3
+      POSTGRES_PASSWORD: ra3pass
+      POSTGRES_DB: ra3db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ra3-db-data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ra3 -d ra3db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: ra3-server
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      mcp:
+        condition: service_started
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://huodingai.com/v1}
+      LLM_MODEL: ${LLM_MODEL:-gpt-5.5}
+      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://ra3:ra3pass@db:5432/ra3db}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      MCP_SERVER_URL: ${MCP_SERVER_URL:-http://mcp:9000/mcp}
+      EXECUTION_ENABLED: ${EXECUTION_ENABLED:-true}
+    ports:
+      - "8000:8000"
+
+  # MCP server: exposes the 9 actions as MCP tools and executes each one in an
+  # ephemeral executor container. Needs the host Docker socket to launch those
+  # sibling containers.
+  mcp:
+    build:
+      context: ./mcp_server
+      dockerfile: Dockerfile
+    container_name: ra3-mcp
+    restart: unless-stopped
+    environment:
+      EXECUTOR_IMAGE: ${EXECUTOR_IMAGE:-ra3-executor:latest}
+      EXECUTOR_MEM_LIMIT: ${EXECUTOR_MEM_LIMIT:-128m}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "9000:9000"
+
+  # Build target only: produces the `ra3-executor:latest` image that the mcp
+  # service runs ephemerally (one container per action). It exits immediately
+  # on `up` — it is not a long-running service.
+  executor:
+    build:
+      context: ./executor
+      dockerfile: Dockerfile
+    image: ra3-executor:latest
+    container_name: ra3-executor-build
+    restart: "no"
+    entrypoint: ["python", "-c", "print('ra3-executor image ready; launched ephemerally by the mcp service')"]
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: ra3-client
+    depends_on:
+      - server
+    environment:
+      RA3_SERVER_URL: ${RA3_SERVER_URL:-http://server:8000}
+    # By default just simulate once; override the command to loop, e.g.:
+    #   docker compose run --rm client python simulate.py --loop --interval 5
+    command: ["python", "simulate.py", "--loop", "--interval", "10"]
+
+volumes:
+  ra3-db-data:
