@@ -1,0 +1,6 @@
+
+ssh -o "UserKnownHostsFile=/dev/null" -o "StrictHostKeyChecking=no" -o "HostKeyAlgorithms=+ssh-rsa" -o LogLevel=ERROR -p 8101 onos@localhost
+app activate org.onosproject.drivers.stratum
+app activate org.onosproject.drivers.bmv2
+app activate org.onosproject.hostprovider
+app activate org.onosproject.netconf

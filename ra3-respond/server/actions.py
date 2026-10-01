@@ -94,7 +94,12 @@ ACTION_DEFINITIONS: list[dict[str, Any]] = [
             "required": ["client_id", "ip_list"],
         },
         "_meta": {
-            "applicable_threats": ["HTTP_Flood", "SYN_Scan", "TCP_Connect_Scan", "UDP_Scan"],
+            # Volumetric floods included: blocking the source is the decisive
+            # mitigation when a flood comes from one or a few identifiable
+            # sources (rate_limit's byte-meter does not stop small-packet floods).
+            "applicable_threats": ["SYN_Flood", "ICMP_Flood", "UDP_Flood", "HTTP_Flood",
+                                   "Slowrate_DoS",
+                                   "SYN_Scan", "TCP_Connect_Scan", "UDP_Scan"],
             "severity_threshold": "medium",
         },
     },
@@ -163,6 +168,73 @@ ACTION_DEFINITIONS: list[dict[str, Any]] = [
             "required": ["client_id", "requests_per_minute"],
         },
         "_meta": {"applicable_threats": ["HTTP_Flood"], "severity_threshold": "medium"},
+    },
+    {
+        "name": "throttle_ue_bandwidth",
+        "description": (
+            "5G-native graduated mitigation: cap the offending UE's bandwidth "
+            "(QoS/AMBR) instead of cutting it off. Enforced in the data plane as "
+            "a per-UE rate meter at the switch and written back to the UE's "
+            "subscriber AMBR in the 5G core. Use to blunt a volumetric flood from "
+            "a single UE while keeping that subscriber connected -- a softer step "
+            "than quarantine_ue or block_ip."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "client_id": {"type": "string", "description": "Target UE / node ID"},
+                "mbps": {
+                    "type": "integer",
+                    "description": "Downlink/uplink cap to apply to the UE, in Mbit/s",
+                    "default": 5,
+                },
+                "duration_minutes": {
+                    "type": "integer",
+                    "description": "Auto-restore the UE's bandwidth after this many minutes",
+                    "default": 30,
+                },
+            },
+            "required": ["client_id"],
+        },
+        "_meta": {
+            # Volumetric floods from a single UE: throttling the subscriber blunts
+            # the flood without a full cut-off. Slowrate excluded (it is low-rate,
+            # so a bandwidth cap does not touch it).
+            "applicable_threats": ["ICMP_Flood", "UDP_Flood", "SYN_Flood", "HTTP_Flood"],
+            "severity_threshold": "medium",
+        },
+    },
+    {
+        "name": "quarantine_ue",
+        "description": (
+            "5G-native cut-off: isolate and revoke the offending subscriber. "
+            "Drops all of the UE's traffic at the switch (data-plane isolation) "
+            "AND bars the subscriber in the 5G core so it cannot re-register. "
+            "More surgical than block_ip: it targets the one 5G subscriber rather "
+            "than an IP address. Use as the decisive step for a single identifiable "
+            "malicious UE when softer mitigations are not enough."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "client_id": {"type": "string", "description": "Target UE / node ID"},
+                "duration_minutes": {
+                    "type": "integer",
+                    "description": "Auto-release the quarantine after this many minutes",
+                    "default": 30,
+                },
+                "reason": {"type": "string", "description": "Why the UE is quarantined", "default": ""},
+            },
+            "required": ["client_id"],
+        },
+        "_meta": {
+            # Any active threat from a single identifiable UE where cutting the
+            # subscriber off is warranted (the 5G-correct alternative to block_ip).
+            "applicable_threats": ["SYN_Flood", "ICMP_Flood", "UDP_Flood", "HTTP_Flood",
+                                   "Slowrate_DoS",
+                                   "SYN_Scan", "TCP_Connect_Scan", "UDP_Scan"],
+            "severity_threshold": "high",
+        },
     },
     {
         "name": "alert_operator",

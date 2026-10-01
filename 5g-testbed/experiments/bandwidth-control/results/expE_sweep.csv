@@ -1,0 +1,12 @@
+mechanism,setpoint_kbps,achieved_mbps,retransmits
+baseline,0,1161.12,14061
+ingress_policing,5000,2.75,423
+ingress_policing,10000,5.24,695
+ingress_policing,20000,9.7,1111
+ingress_policing,50000,24.11,2240
+ingress_policing,100000,50.2,3651
+htb_queue,5000,5.11,7
+htb_queue,10000,9.57,6
+htb_queue,20000,19.0,7
+htb_queue,50000,46.92,12
+htb_queue,100000,93.19,24

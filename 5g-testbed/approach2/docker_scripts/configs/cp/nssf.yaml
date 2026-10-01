@@ -1,0 +1,18 @@
+nssf:
+  sbi:
+    - dev: veth1
+      advertise: 192.168.235.2
+      port: 7784
+  nsi:
+    - addr: 192.168.235.2
+      port: 7777
+      s_nssai:
+        sst: 1
+nrf:
+  sbi:
+    - addr: 192.168.235.2
+      port: 7777
+parameter:
+max:
+pool:
+time:

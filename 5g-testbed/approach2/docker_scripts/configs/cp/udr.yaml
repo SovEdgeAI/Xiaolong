@@ -1,0 +1,14 @@
+db_uri: mongodb://192.168.235.1:27017/open5gs_a2
+udr:
+  sbi:
+    - dev: veth1
+      advertise: 192.168.235.2
+      port: 7780
+nrf:
+  sbi:
+    - addr: 192.168.235.2
+      port: 7777
+parameter:
+max:
+pool:
+time:

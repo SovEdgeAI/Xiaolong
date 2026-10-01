@@ -1,0 +1,110 @@
+{
+ "labels": "artifacts/teacher_labels.jsonl",
+ "label_source": "teacher",
+ "questions": {
+  "alert_operator": {
+   "L0": {
+    "n": 15,
+    "accuracy": 0.8667,
+    "ece": 0.1322,
+    "brier": 0.1327,
+    "mean_confidence": 0.9988,
+    "seconds_per_state": 9.97
+   },
+   "L1": {
+    "n": 15,
+    "accuracy": 0.8667,
+    "ece": 0.1331,
+    "brier": 0.0935,
+    "mean_confidence": 0.9324,
+    "seconds_per_state": 10.03
+   },
+   "L2": {
+    "n": 15,
+    "accuracy": 1.0,
+    "ece": 0.1205,
+    "brier": 0.0309,
+    "mean_confidence": 0.8795,
+    "seconds_per_state": 3.18
+   }
+  },
+  "block_ip": {
+   "L0": {
+    "n": 16,
+    "accuracy": 0.4375,
+    "ece": 0.5625,
+    "brier": 0.5625,
+    "mean_confidence": 1.0,
+    "seconds_per_state": 9.39
+   },
+   "L1": {
+    "n": 16,
+    "accuracy": 0.4375,
+    "ece": 0.3703,
+    "brier": 0.3625,
+    "mean_confidence": 0.7756,
+    "seconds_per_state": 9.42
+   },
+   "L2": {
+    "n": 16,
+    "accuracy": 0.9375,
+    "ece": 0.0684,
+    "brier": 0.0267,
+    "mean_confidence": 0.9442,
+    "seconds_per_state": 3.25
+   }
+  },
+  "close_unnecessary_ports": {
+   "L0": {
+    "n": 13,
+    "accuracy": 0.5385,
+    "ece": 0.4513,
+    "brier": 0.4198,
+    "mean_confidence": 0.9484,
+    "seconds_per_state": 8.83
+   },
+   "L1": {
+    "n": 13,
+    "accuracy": 0.5385,
+    "ece": 0.1052,
+    "brier": 0.2509,
+    "mean_confidence": 0.593,
+    "seconds_per_state": 9.43
+   },
+   "L2": {
+    "n": 13,
+    "accuracy": 0.7692,
+    "ece": 0.2601,
+    "brier": 0.1968,
+    "mean_confidence": 0.9016,
+    "seconds_per_state": 2.82
+   }
+  },
+  "share_threat_intel": {
+   "L0": {
+    "n": 31,
+    "accuracy": 0.9032,
+    "ece": 0.0968,
+    "brier": 0.0968,
+    "mean_confidence": 1.0,
+    "seconds_per_state": 9.0
+   },
+   "L1": {
+    "n": 31,
+    "accuracy": 0.9032,
+    "ece": 0.0615,
+    "brier": 0.0909,
+    "mean_confidence": 0.8417,
+    "seconds_per_state": 9.05
+   },
+   "L2": {
+    "n": 31,
+    "accuracy": 0.9032,
+    "ece": 0.123,
+    "brier": 0.0842,
+    "mean_confidence": 0.8888,
+    "seconds_per_state": 3.12
+   }
+  }
+ }
+}

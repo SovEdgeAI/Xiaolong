@@ -1,0 +1,36 @@
+# ---------------------------------------------------------------------------
+# Runtime state and build output.
+# approach2/docker_scripts/run/ is ~491 MB of pure runtime artefacts:
+#   run/stratum/write-reqs.txt  P4Runtime write log (259 MB and growing)
+#   run/logs/                   service logs (231 MB)
+#   run/build/                  Maven sandbox used by 06_deploy_app.sh
+# target/ is Maven output. It was tracked upstream, which is why 06_deploy_app.sh
+# builds out-of-tree (mvn clean would delete tracked files). Untracked here.
+# ---------------------------------------------------------------------------
+approach2/docker_scripts/run/
+approach2/onos_app/approach2/target/
+
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+
+# Vendored third-party build tree (~130 MB of source + cmake objects).
+# UERANSIM.zip is tracked in the repo, so this is reconstructible.
+UERANSIM/
+
+# Attack captures from the StopDDoS collection. Their licence permits use for
+# building DDoS protection but grants no redistribution, so fetch them instead:
+#   tools/fetch_stopddos.sh
+# datasets/samples/ is our own synthetic sample and IS committed.
+datasets/stopddos/
+datasets/*.pcap
+datasets/*.pcapng
+
+# Experiment run logs. The results CSVs and the small evidence pcaps
+# (expD_n7.pcap, expD_pfcp.pcap) are kept.
+experiments/*/results/*.log
+
+# Local session notes: contains pasted terminal transcripts including
+# "[sudo] password for herman". Do not publish.
+/5G-SDN-DDoS-Detection-Mitigation *.md

@@ -94,3 +94,12 @@ async def execute_actions(actions: list[dict]) -> list[dict]:
         ]
 
     return results
+
+
+async def call_tool(name: str, arguments: dict) -> dict:
+    """Call one MCP tool and return its JSON payload (used by the training API).
+    Raises on connection failure; the caller records the error."""
+    async with streamablehttp_client(MCP_SERVER_URL) as (read, write, _):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            return _extract_payload(await session.call_tool(name, arguments))

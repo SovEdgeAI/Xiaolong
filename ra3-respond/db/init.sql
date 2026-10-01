@@ -56,6 +56,24 @@ CREATE TABLE IF NOT EXISTS responses (
 CREATE INDEX IF NOT EXISTS ix_responses_incident_id ON responses (incident_id);
 
 -- ---------------------------------------------------------------------
+-- Table 4: training_jobs — fine-tuning jobs for the local decision model
+-- ---------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS training_jobs (
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    status      VARCHAR(20) NOT NULL DEFAULT 'queued',
+    trigger     VARCHAR(50) NOT NULL,
+    mode        VARCHAR(20) NOT NULL,
+    spec        JSONB NOT NULL DEFAULT '{}'::jsonb,
+    result      JSONB,
+    error       TEXT,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS ix_training_jobs_status     ON training_jobs (status);
+CREATE INDEX IF NOT EXISTS ix_training_jobs_created_at ON training_jobs (created_at DESC);
+
+-- ---------------------------------------------------------------------
 -- Seed data: the 9 predefined response actions
 -- parameters_schema mirrors the JSON-Schema `input_schema` used for
 -- Claude function calling (see server/actions.py).
@@ -109,6 +127,22 @@ VALUES
     ARRAY['HTTP_Flood'],
     '{"type":"object","properties":{"client_id":{"type":"string","description":"Target node ID"},"requests_per_minute":{"type":"integer","description":"Allowed requests per minute"},"per_ip":{"type":"boolean","description":"Apply the limit per source IP","default":true}},"required":["client_id","requests_per_minute"]}'::jsonb,
     'medium'
+),
+(
+    'throttle_ue_bandwidth',
+    'Throttle UE Bandwidth',
+    '5G-native graduated mitigation: cap the offending UE''s bandwidth (QoS/AMBR) instead of cutting it off, enforced as a per-UE rate meter at the switch plus the subscriber AMBR in the core.',
+    ARRAY['ICMP_Flood','UDP_Flood','SYN_Flood','HTTP_Flood'],
+    '{"type":"object","properties":{"client_id":{"type":"string","description":"Target UE / node ID"},"mbps":{"type":"integer","description":"Downlink/uplink cap to apply to the UE, in Mbit/s","default":5},"duration_minutes":{"type":"integer","description":"Auto-restore the UE bandwidth after this many minutes","default":30}},"required":["client_id"]}'::jsonb,
+    'medium'
+),
+(
+    'quarantine_ue',
+    'Quarantine UE',
+    '5G-native cut-off: isolate the offending UE at the switch AND bar the subscriber in the 5G core so it cannot re-register. More surgical than block_ip (targets the subscriber, not an IP).',
+    ARRAY['ICMP_Flood','UDP_Flood','SYN_Flood','HTTP_Flood','Slowrate_DoS','SYN_Scan','TCP_Connect_Scan','UDP_Scan'],
+    '{"type":"object","properties":{"client_id":{"type":"string","description":"Target UE / node ID"},"duration_minutes":{"type":"integer","description":"Auto-release the quarantine after this many minutes","default":30},"reason":{"type":"string","description":"Why the UE is quarantined","default":""}},"required":["client_id"]}'::jsonb,
+    'high'
 ),
 (
     'alert_operator',

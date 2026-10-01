@@ -1,0 +1,17 @@
+upf:
+  pfcp:
+    - dev: eth1
+  gtpu:
+    - dev: eth1
+  subnet:
+    - addr: 10.45.0.1/16
+      dnn: internet
+
+smf:
+  pfcp:
+    - addr: 192.168.230.3
+
+parameter:
+max:
+pool:
+time:

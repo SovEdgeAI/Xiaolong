@@ -1,0 +1,10 @@
+capture,mode,ue_ip,sources,first_block_s,blocked_attackers,gtp_flows_peak,leak_out_in,benign_flagged,onos_ok,detector_ok
+pkt.TCP.synflood.spoofed.pcap,ue,10.45.0.3,1,5,1,2,1/13731,no,yes,yes
+pkt.TCP.synflood.spoofed.pcap,spoof,10.45.0.3,37623,5,1,58272,1/1,yes,yes,yes
+pkt.ICMP.largeempty.pcap,ue,10.45.0.3,1,71,1,0,1/25747,yes,yes,yes
+pkt.UDP.rdm.fixedlength.pcapng,ue,10.45.0.3,1,5,1,4,1/25622,no,yes,yes
+amp.UDP.DNSANY.pcap,ue,10.45.0.3,1,15,1,2,1/25642,yes,yes,yes
+amp.UDP.memcached.ntp.cldap.pcap,ue,10.45.0.3,1,10,1,2,1/9565,no,yes,yes
+pkt.UDP.fragmented.pcap,ue,10.45.0.3,1,50,1,2,1/25671,yes,yes,yes
+pkt.UDP.fragmented.pcap,spoof,10.45.0.3,41,45,21,86,103/103,yes,yes,yes
+amp.UDP.DNSANY.pcap,spoof,10.45.0.3,79,5,36,170,1/7,no,yes,yes

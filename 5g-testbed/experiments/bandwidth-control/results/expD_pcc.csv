@@ -1,0 +1,6 @@
+phase,mbr_mbps,flow_status,tcp_mbps,icmp_loss_rtt,ue_addr
+baseline,0,-,1161.09,0%/0.494ms,10.45.0.3
+MBR 100 Mbit/s,100,2,1161.66,0%/0.496ms,10.45.0.4
+MBR 20 Mbit/s,20,2,1161.49,0%/0.432ms,10.45.0.5
+MBR 5 Mbit/s,5,2,1146.37,0%/0.506ms,10.45.0.6
+gate closed,100,3,1137.12,0%/0.675ms,10.45.0.7

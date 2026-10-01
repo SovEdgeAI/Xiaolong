@@ -16,6 +16,7 @@ import os
 
 from mcp.server.fastmcp import FastMCP
 
+import training
 from runner import run_in_container
 
 logging.basicConfig(
@@ -96,6 +97,44 @@ def share_threat_intel(attack_type: str, source_pattern: str, affected_nodes: li
     return run_in_container("share_threat_intel", {
         "attack_type": attack_type, "source_pattern": source_pattern, "affected_nodes": affected_nodes,
     })
+
+
+@mcp.tool()
+def throttle_ue_bandwidth(client_id: str, mbps: int = 5, duration_minutes: int = 30) -> dict:
+    """5G-native: cap the offending UE's bandwidth (per-UE meter + core AMBR)."""
+    return run_in_container("throttle_ue_bandwidth", {
+        "client_id": client_id, "mbps": mbps, "duration_minutes": duration_minutes,
+    })
+
+
+@mcp.tool()
+def quarantine_ue(client_id: str, duration_minutes: int = 30, reason: str = "") -> dict:
+    """5G-native: isolate + force-detach the UE and bar the subscriber in the core."""
+    return run_in_container("quarantine_ue", {
+        "client_id": client_id, "duration_minutes": duration_minutes, "reason": reason,
+    })
+
+
+# ---------------------------------------------------------------------------
+# Model maintenance tools. NOT response actions: they are absent from the action
+# catalog (server/actions.py), so the decision engine can never select them;
+# only the RA3 training API calls them.
+# ---------------------------------------------------------------------------
+@mcp.tool()
+def training_start_job(job_id: str, base_model: str, dataset: str, mode: str = "dry_run",
+                       method: str = "lora", hyperparams: dict | None = None,
+                       simulate_seconds: float = 0) -> dict:
+    """Start a fine-tuning job in a detached trainer container; returns immediately."""
+    return training.start_job(job_id, {
+        "base_model": base_model, "dataset": dataset, "mode": mode, "method": method,
+        "hyperparams": hyperparams or {}, "simulate_seconds": simulate_seconds,
+    })
+
+
+@mcp.tool()
+def training_get_job(job_id: str) -> dict:
+    """Report a fine-tuning job's state and the trainer's status.json."""
+    return training.get_job(job_id)
 
 
 if __name__ == "__main__":

@@ -20,6 +20,8 @@ import time
 import httpx
 
 SERVER_URL = os.getenv("RA3_SERVER_URL", "http://localhost:8000")
+# A local CPU model (LLM_MODEL=anyjev) can take minutes per decision.
+REQUEST_TIMEOUT = float(os.getenv("RA3_REQUEST_TIMEOUT", "60"))
 
 # ---------------------------------------------------------------------------
 # Sample scenarios: >= 2 per attack type, with signature-accurate metadata.
@@ -160,7 +162,7 @@ def send_report(client: httpx.Client, report: dict) -> None:
     print(f"\n→ Reporting {report['attack_type']} "
           f"from {report['client_id']} (severity={report['severity']})")
     try:
-        resp = client.post(f"{SERVER_URL}/report", json=report, timeout=60.0)
+        resp = client.post(f"{SERVER_URL}/report", json=report, timeout=REQUEST_TIMEOUT)
     except httpx.HTTPError as exc:
         print(f"  ✗ request failed: {exc}")
         return

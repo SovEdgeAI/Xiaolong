@@ -22,6 +22,11 @@ logger = logging.getLogger("ra3.mcp.runner")
 
 EXECUTOR_IMAGE = os.getenv("EXECUTOR_IMAGE", "ra3-executor:latest")
 MEM_LIMIT = os.getenv("EXECUTOR_MEM_LIMIT", "128m")
+# mock (default): simulate, no network. testbed: enforce on the testbed via the
+# agent, which needs network reachability to AGENT_URL.
+EXECUTOR_MODE = os.getenv("EXECUTOR_MODE", "mock")
+AGENT_URL = os.getenv("AGENT_URL", "http://172.17.0.1:8090")
+TESTBED_UE_IP = os.getenv("TESTBED_UE_IP", "10.45.0.3")
 
 _client: docker.DockerClient | None = None
 
@@ -36,18 +41,22 @@ def _docker() -> docker.DockerClient:
 def run_in_container(action: str, arguments: dict[str, Any]) -> dict:
     """Execute one action in a throw-away container; return its JSON result."""
     try:
-        raw = _docker().containers.run(
-            EXECUTOR_IMAGE,
-            environment={
-                "ACTION_NAME": action,
-                "ACTION_ARGS": json.dumps(arguments),
-            },
-            network_disabled=True,   # no network access for the executor
-            mem_limit=MEM_LIMIT,      # cap memory
-            remove=True,              # --rm: destroy container when done
-            stdout=True,
-            stderr=False,
-        )
+        env = {"ACTION_NAME": action, "ACTION_ARGS": json.dumps(arguments),
+               "EXECUTOR_MODE": EXECUTOR_MODE}
+        run_kwargs: dict[str, Any] = {
+            "environment": env,
+            "mem_limit": MEM_LIMIT,   # cap memory
+            "remove": True,           # --rm: destroy container when done
+            "stdout": True,
+            "stderr": False,
+        }
+        if EXECUTOR_MODE == "testbed":
+            # needs to reach the testbed-agent; stays a throw-away container
+            env["AGENT_URL"] = AGENT_URL
+            env["TESTBED_UE_IP"] = TESTBED_UE_IP
+        else:
+            run_kwargs["network_disabled"] = True   # mock mode: no network
+        raw = _docker().containers.run(EXECUTOR_IMAGE, **run_kwargs)
     except docker.errors.ImageNotFound:
         logger.error("Executor image '%s' not found", EXECUTOR_IMAGE)
         return {

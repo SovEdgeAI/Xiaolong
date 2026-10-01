@@ -1,0 +1,294 @@
+pkg_info {
+  arch: "v1model"
+}
+tables {
+  preamble {
+    id: 45130464
+    name: "IngressPipeImpl.gtp_check"
+    alias: "gtp_check"
+  }
+  match_fields {
+    id: 1
+    name: "hdr.udp.dstPort"
+    bitwidth: 16
+    match_type: EXACT
+  }
+  match_fields {
+    id: 2
+    name: "hdr.udp.srcPort"
+    bitwidth: 16
+    match_type: EXACT
+  }
+  action_refs {
+    id: 24930896
+  }
+  action_refs {
+    id: 21257015
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  direct_resource_ids: 325102167
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 34241248
+    name: "IngressPipeImpl.dropped_inner_ipv4"
+    alias: "dropped_inner_ipv4"
+  }
+  match_fields {
+    id: 1
+    name: "hdr.inner_ipv4.src_addr"
+    bitwidth: 32
+    match_type: EXACT
+  }
+  action_refs {
+    id: 28396054
+  }
+  action_refs {
+    id: 21257015
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  size: 1024
+}
+tables {
+  preamble {
+    id: 39627332
+    name: "IngressPipeImpl.gtp_flows"
+    alias: "gtp_flows"
+  }
+  match_fields {
+    id: 1
+    name: "hdr.inner_ipv4.src_addr"
+    bitwidth: 32
+    match_type: EXACT
+  }
+  match_fields {
+    id: 2
+    name: "hdr.inner_ipv4.dst_addr"
+    bitwidth: 32
+    match_type: EXACT
+  }
+  match_fields {
+    id: 3
+    name: "hdr.inner_ipv4.protocol"
+    bitwidth: 8
+    match_type: EXACT
+  }
+  action_refs {
+    id: 28396054
+  }
+  action_refs {
+    id: 28491449
+  }
+  action_refs {
+    id: 21257015
+    annotations: "@defaultonly"
+    scope: DEFAULT_ONLY
+  }
+  direct_resource_ids: 321147148
+  size: 1024
+}
+tables {
+  preamble {
+    id: 34995211
+    name: "IngressPipeImpl.ipv4_check"
+    alias: "ipv4_check"
+  }
+  match_fields {
+    id: 1
+    name: "hdr.ipv4.dst_addr"
+    bitwidth: 32
+    match_type: EXACT
+  }
+  action_refs {
+    id: 28396054
+  }
+  action_refs {
+    id: 18299257
+  }
+  direct_resource_ids: 329421252
+  size: 1024
+  is_const_table: true
+}
+tables {
+  preamble {
+    id: 33951081
+    name: "IngressPipeImpl.acl_table"
+    alias: "acl_table"
+  }
+  match_fields {
+    id: 1
+    name: "standard_metadata.ingress_port"
+    bitwidth: 9
+    match_type: TERNARY
+  }
+  match_fields {
+    id: 2
+    name: "hdr.ethernet.dst_addr"
+    bitwidth: 48
+    match_type: TERNARY
+  }
+  match_fields {
+    id: 3
+    name: "hdr.ethernet.src_addr"
+    bitwidth: 48
+    match_type: TERNARY
+  }
+  match_fields {
+    id: 4
+    name: "hdr.ethernet.ether_type"
+    bitwidth: 16
+    match_type: TERNARY
+  }
+  action_refs {
+    id: 30661427
+  }
+  action_refs {
+    id: 28447560
+  }
+  action_refs {
+    id: 28396054
+  }
+  direct_resource_ids: 332339774
+  size: 1024
+}
+actions {
+  preamble {
+    id: 21257015
+    name: "NoAction"
+    alias: "NoAction"
+    annotations: "@noWarn(\"unused\")"
+  }
+}
+actions {
+  preamble {
+    id: 28396054
+    name: "IngressPipeImpl.drop"
+    alias: "drop"
+  }
+}
+actions {
+  preamble {
+    id: 18299257
+    name: "IngressPipeImpl.send_to_port"
+    alias: "send_to_port"
+  }
+  params {
+    id: 1
+    name: "port_num"
+    bitwidth: 9
+  }
+}
+actions {
+  preamble {
+    id: 24930896
+    name: "IngressPipeImpl.set_gtp"
+    alias: "set_gtp"
+  }
+}
+actions {
+  preamble {
+    id: 28491449
+    name: "IngressPipeImpl.track_gtp_flows"
+    alias: "track_gtp_flows"
+  }
+}
+actions {
+  preamble {
+    id: 30661427
+    name: "IngressPipeImpl.send_to_cpu"
+    alias: "send_to_cpu"
+  }
+}
+actions {
+  preamble {
+    id: 28447560
+    name: "IngressPipeImpl.clone_to_cpu"
+    alias: "clone_to_cpu"
+  }
+}
+direct_counters {
+  preamble {
+    id: 325102167
+    name: "gtp_check_counter"
+    alias: "gtp_check_counter"
+  }
+  spec {
+    unit: BOTH
+  }
+  direct_table_id: 45130464
+}
+direct_counters {
+  preamble {
+    id: 321147148
+    name: "gtp_flow_counter"
+    alias: "gtp_flow_counter"
+  }
+  spec {
+    unit: BOTH
+  }
+  direct_table_id: 39627332
+}
+direct_counters {
+  preamble {
+    id: 329421252
+    name: "ipv4_check_counter"
+    alias: "ipv4_check_counter"
+  }
+  spec {
+    unit: BOTH
+  }
+  direct_table_id: 34995211
+}
+direct_counters {
+  preamble {
+    id: 332339774
+    name: "acl_table_counter"
+    alias: "acl_table_counter"
+  }
+  spec {
+    unit: BOTH
+  }
+  direct_table_id: 33951081
+}
+controller_packet_metadata {
+  preamble {
+    id: 69098127
+    name: "packet_in"
+    alias: "packet_in"
+    annotations: "@controller_header(\"packet_in\")"
+  }
+  metadata {
+    id: 1
+    name: "ingress_port"
+    bitwidth: 9
+  }
+  metadata {
+    id: 2
+    name: "_pad"
+    bitwidth: 7
+  }
+}
+controller_packet_metadata {
+  preamble {
+    id: 78842819
+    name: "packet_out"
+    alias: "packet_out"
+    annotations: "@controller_header(\"packet_out\")"
+  }
+  metadata {
+    id: 1
+    name: "egress_port"
+    bitwidth: 9
+  }
+  metadata {
+    id: 2
+    name: "_pad"
+    bitwidth: 7
+  }
+}
+type_info {
+}

@@ -1,0 +1,32 @@
+smf:
+  sbi:
+    - dev: eth1
+      advertise: 192.168.230.3
+      port: 7779
+  pfcp:
+    - dev: eth1
+  gtpc:
+    - dev: eth1
+  gtpu:
+    - dev: eth1
+  subnet:
+    - addr: 10.45.0.1/16
+      dnn: internet
+  dns:
+    - 8.8.8.8
+    - 8.8.4.4
+  mtu: 1400
+
+nrf:
+  sbi:
+    - addr: 192.168.230.3
+      port: 7777
+
+upf:
+  pfcp:
+    - addr: 192.168.230.4
+
+parameter:
+max:
+pool:
+time:

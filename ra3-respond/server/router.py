@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
 import uuid
 
@@ -11,8 +12,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 import llm
 import mcp_client
+import training
 from database import check_connection, get_session
-from models import Action, Incident, Response
+from models import Action, Incident, Response, TrainingJob
 from schemas import (
     ActionOut,
     ExecutionOutcome,
@@ -23,6 +25,8 @@ from schemas import (
     ReportRequest,
     ReportResponse,
     SelectedAction,
+    TrainingJobCreate,
+    TrainingJobOut,
 )
 
 logger = logging.getLogger("ra3.router")
@@ -39,7 +43,7 @@ async def report_threat(
     session: AsyncSession = Depends(get_session),
 ) -> ReportResponse:
     # Normal traffic needs no response; short-circuit before touching the LLM.
-    if payload.attack_type.value == "Normal":
+    if payload.attack_type == "Normal":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="attack_type 'Normal' requires no response action.",
@@ -48,7 +52,7 @@ async def report_threat(
     # 1. Persist the incident first so we have an ID to hand to the LLM.
     incident = Incident(
         client_id=payload.client_id,
-        attack_type=payload.attack_type.value,
+        attack_type=payload.attack_type,
         severity=payload.severity.value,
         confidence=payload.confidence,
         meta=payload.metadata,
@@ -59,7 +63,9 @@ async def report_threat(
 
     # 2. Ask Claude to choose the response actions.
     try:
-        decision = llm.decide_actions(
+        # Off the event loop: a local model (LLM_MODEL=anyjev) takes seconds.
+        decision = await asyncio.to_thread(
+            llm.decide_actions,
             incident_id=str(incident.id),
             client_id=incident.client_id,
             attack_type=incident.attack_type,
@@ -105,6 +111,9 @@ async def report_threat(
             detail="Failed to persist decision.",
         ) from exc
 
+    # Model maintenance runs beside alert handling: this only schedules a check.
+    training.schedule_auto_trigger()
+
     return ReportResponse(
         incident_id=incident.id,
         attack_type=incident.attack_type,
@@ -112,6 +121,7 @@ async def report_threat(
         selected_actions=[SelectedAction(**a) for a in decision["selected_actions"]],
         execution_results=[ExecutionOutcome(**r) for r in execution_results],
         llm_reasoning=decision["llm_reasoning"],
+        explanation=decision.get("explanation"),
     )
 
 
@@ -198,3 +208,47 @@ async def health() -> HealthResponse:
         status="ok" if db_ok else "degraded",
         database="connected" if db_ok else "disconnected",
     )
+
+
+# ---------------------------------------------------------------------------
+# /training/jobs — fine-tuning jobs for the local decision model. Not response
+# actions: the decision engine never selects these; they run in the background.
+# ---------------------------------------------------------------------------
+@router.post("/training/jobs", response_model=TrainingJobOut, status_code=status.HTTP_202_ACCEPTED)
+async def create_training_job(
+    payload: TrainingJobCreate,
+    session: AsyncSession = Depends(get_session),
+) -> TrainingJobOut:
+    try:
+        job = await training.start_job(
+            session, trigger="manual", mode=payload.mode.value, base_model=payload.base_model,
+            dataset=payload.dataset, method=payload.method, hyperparams=payload.hyperparams,
+            simulate_seconds=payload.simulate_seconds,
+        )
+    except training.TrainingDisabled as exc:
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(exc)) from exc
+    except training.JobConflict as exc:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc)) from exc
+    return TrainingJobOut.model_validate(job)
+
+
+@router.get("/training/jobs", response_model=list[TrainingJobOut])
+async def list_training_jobs(
+    limit: int = Query(20, ge=1, le=200),
+    session: AsyncSession = Depends(get_session),
+) -> list[TrainingJobOut]:
+    rows = (await session.execute(
+        select(TrainingJob).order_by(TrainingJob.created_at.desc()).limit(limit)
+    )).scalars().all()
+    return [TrainingJobOut.model_validate(await training.refresh(session, j)) for j in rows]
+
+
+@router.get("/training/jobs/{job_id}", response_model=TrainingJobOut)
+async def get_training_job(
+    job_id: uuid.UUID,
+    session: AsyncSession = Depends(get_session),
+) -> TrainingJobOut:
+    job = await session.get(TrainingJob, job_id)
+    if job is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Training job {job_id} not found.")
+    return TrainingJobOut.model_validate(await training.refresh(session, job))

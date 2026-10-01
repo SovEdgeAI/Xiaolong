@@ -1,0 +1,7 @@
+# Extra deps for LLM_MODEL=anyjev (local open-source decision model).
+# CPU-only torch:  pip install --index-url https://download.pytorch.org/whl/cpu torch
+# 0.2.0 from GitHub (PyPI 0.0.2 has no L2 heads); pinned to a reviewed commit
+anyjev[hf] @ https://github.com/nokia-applied-research/AnyJev/archive/10d5db91dda38dbde74c6abc1c075ce6463723d1.tar.gz
+torch
+transformers
+accelerate

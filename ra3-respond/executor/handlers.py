@@ -38,6 +38,22 @@ def block_ip(client_id: str, ip_list: list[str], duration_minutes: int = 30, **_
     }
 
 
+def throttle_ue_bandwidth(client_id: str, mbps: int = 5, duration_minutes: int = 30, **_: Any) -> dict:
+    return {
+        "effect": f"Throttled UE {client_id} to {mbps} Mbit/s (QoS/AMBR)",
+        "mbps": mbps,
+        "duration_minutes": duration_minutes,
+    }
+
+
+def quarantine_ue(client_id: str, duration_minutes: int = 30, reason: str = "", **_: Any) -> dict:
+    return {
+        "effect": f"Quarantined UE {client_id} (isolated + subscriber barred)",
+        "duration_minutes": duration_minutes,
+        "reason": reason,
+    }
+
+
 def set_connection_timeout(client_id: str, timeout_seconds: int, **_: Any) -> dict:
     return {
         "effect": f"Connection idle timeout on {client_id} set to {timeout_seconds}s",
@@ -90,6 +106,8 @@ def share_threat_intel(attack_type: str, source_pattern: str, affected_nodes: li
 HANDLERS: dict[str, Any] = {
     "enable_syn_cookie": enable_syn_cookie,
     "rate_limit": rate_limit,
+    "throttle_ue_bandwidth": throttle_ue_bandwidth,
+    "quarantine_ue": quarantine_ue,
     "block_ip": block_ip,
     "set_connection_timeout": set_connection_timeout,
     "close_unnecessary_ports": close_unnecessary_ports,

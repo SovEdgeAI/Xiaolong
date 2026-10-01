@@ -1,0 +1,2112 @@
+{
+  "header_types" : [
+    {
+      "name" : "scalars_0",
+      "id" : 0,
+      "fields" : [
+        ["dropped_0", 1, false],
+        ["acl_0", 1, false],
+        ["gtp_0", 1, false],
+        ["pass_0", 1, false],
+        ["metadata.ingress_port", 9, false],
+        ["metadata.flowID", 32, false],
+        ["_padding_0", 3, false]
+      ]
+    },
+    {
+      "name" : "standard_metadata",
+      "id" : 1,
+      "fields" : [
+        ["ingress_port", 9, false],
+        ["egress_spec", 9, false],
+        ["egress_port", 9, false],
+        ["instance_type", 32, false],
+        ["packet_length", 32, false],
+        ["enq_timestamp", 32, false],
+        ["enq_qdepth", 19, false],
+        ["deq_timedelta", 32, false],
+        ["deq_qdepth", 19, false],
+        ["ingress_global_timestamp", 48, false],
+        ["egress_global_timestamp", 48, false],
+        ["mcast_grp", 16, false],
+        ["egress_rid", 16, false],
+        ["checksum_error", 1, false],
+        ["parser_error", 32, false],
+        ["priority", 3, false],
+        ["_padding", 3, false]
+      ]
+    },
+    {
+      "name" : "cpu_out_header_t",
+      "id" : 2,
+      "fields" : [
+        ["egress_port", 9, false],
+        ["_pad", 7, false]
+      ]
+    },
+    {
+      "name" : "cpu_in_header_t",
+      "id" : 3,
+      "fields" : [
+        ["ingress_port", 9, false],
+        ["_pad", 7, false]
+      ]
+    },
+    {
+      "name" : "ethernet_t",
+      "id" : 4,
+      "fields" : [
+        ["dst_addr", 48, false],
+        ["src_addr", 48, false],
+        ["ether_type", 16, false]
+      ]
+    },
+    {
+      "name" : "ipv4_t",
+      "id" : 5,
+      "fields" : [
+        ["version", 4, false],
+        ["ihl", 4, false],
+        ["dscp", 6, false],
+        ["ecn", 2, false],
+        ["total_len", 16, false],
+        ["identification", 16, false],
+        ["flags", 3, false],
+        ["frag_offset", 13, false],
+        ["ttl", 8, false],
+        ["protocol", 8, false],
+        ["hdr_checksum", 16, false],
+        ["src_addr", 32, false],
+        ["dst_addr", 32, false]
+      ]
+    },
+    {
+      "name" : "udp_t",
+      "id" : 6,
+      "fields" : [
+        ["srcPort", 16, false],
+        ["dstPort", 16, false],
+        ["length", 16, false],
+        ["checksum", 16, false]
+      ]
+    },
+    {
+      "name" : "gtp_t",
+      "id" : 7,
+      "fields" : [
+        ["flags", 8, false],
+        ["msgType", 8, false],
+        ["length", 16, false],
+        ["teid", 32, false]
+      ]
+    },
+    {
+      "name" : "gtp_optional_t",
+      "id" : 8,
+      "fields" : [
+        ["sequence_number_1", 8, false],
+        ["sequence_number_2", 8, false],
+        ["N_PDU", 8, false],
+        ["next_extension_header_type", 8, false]
+      ]
+    },
+    {
+      "name" : "extension_header_t",
+      "id" : 9,
+      "fields" : [
+        ["length", 8, false],
+        ["pdu_session", 8, false],
+        ["QFI", 8, false],
+        ["extension_header", 8, false]
+      ]
+    }
+  ],
+  "headers" : [
+    {
+      "name" : "scalars",
+      "id" : 0,
+      "header_type" : "scalars_0",
+      "metadata" : true,
+      "pi_omit" : true
+    },
+    {
+      "name" : "standard_metadata",
+      "id" : 1,
+      "header_type" : "standard_metadata",
+      "metadata" : true,
+      "pi_omit" : true
+    },
+    {
+      "name" : "cpu_out",
+      "id" : 2,
+      "header_type" : "cpu_out_header_t",
+      "metadata" : false,
+      "pi_omit" : true
+    },
+    {
+      "name" : "cpu_in",
+      "id" : 3,
+      "header_type" : "cpu_in_header_t",
+      "metadata" : false,
+      "pi_omit" : true
+    },
+    {
+      "name" : "ethernet",
+      "id" : 4,
+      "header_type" : "ethernet_t",
+      "metadata" : false,
+      "pi_omit" : true
+    },
+    {
+      "name" : "ipv4",
+      "id" : 5,
+      "header_type" : "ipv4_t",
+      "metadata" : false,
+      "pi_omit" : true
+    },
+    {
+      "name" : "udp",
+      "id" : 6,
+      "header_type" : "udp_t",
+      "metadata" : false,
+      "pi_omit" : true
+    },
+    {
+      "name" : "gtp",
+      "id" : 7,
+      "header_type" : "gtp_t",
+      "metadata" : false,
+      "pi_omit" : true
+    },
+    {
+      "name" : "gtp_optional",
+      "id" : 8,
+      "header_type" : "gtp_optional_t",
+      "metadata" : false,
+      "pi_omit" : true
+    },
+    {
+      "name" : "extension_header",
+      "id" : 9,
+      "header_type" : "extension_header_t",
+      "metadata" : false,
+      "pi_omit" : true
+    },
+    {
+      "name" : "inner_ipv4",
+      "id" : 10,
+      "header_type" : "ipv4_t",
+      "metadata" : false,
+      "pi_omit" : true
+    },
+    {
+      "name" : "inner_udp",
+      "id" : 11,
+      "header_type" : "udp_t",
+      "metadata" : false,
+      "pi_omit" : true
+    }
+  ],
+  "header_stacks" : [],
+  "header_union_types" : [],
+  "header_unions" : [],
+  "header_union_stacks" : [],
+  "field_lists" : [
+    {
+      "id" : 1,
+      "name" : "field_list1",
+      "elements" : [
+        {
+          "type" : "field",
+          "value" : ["scalars", "metadata.ingress_port"]
+        }
+      ]
+    }
+  ],
+  "errors" : [
+    ["NoError", 0],
+    ["PacketTooShort", 1],
+    ["NoMatch", 2],
+    ["StackOutOfBounds", 3],
+    ["HeaderTooShort", 4],
+    ["ParserTimeout", 5],
+    ["ParserInvalidArgument", 6]
+  ],
+  "enums" : [],
+  "parsers" : [
+    {
+      "name" : "parser",
+      "id" : 0,
+      "init_state" : "start",
+      "parse_states" : [
+        {
+          "name" : "start",
+          "id" : 0,
+          "parser_ops" : [
+            {
+              "parameters" : [
+                {
+                  "type" : "field",
+                  "value" : ["scalars", "metadata.ingress_port"]
+                },
+                {
+                  "type" : "field",
+                  "value" : ["standard_metadata", "ingress_port"]
+                }
+              ],
+              "op" : "set"
+            }
+          ],
+          "transitions" : [
+            {
+              "type" : "hexstr",
+              "value" : "0x00ff",
+              "mask" : null,
+              "next_state" : "parse_packet_out"
+            },
+            {
+              "type" : "default",
+              "value" : null,
+              "mask" : null,
+              "next_state" : "parse_ethernet"
+            }
+          ],
+          "transition_key" : [
+            {
+              "type" : "field",
+              "value" : ["standard_metadata", "ingress_port"]
+            }
+          ]
+        },
+        {
+          "name" : "parse_packet_out",
+          "id" : 1,
+          "parser_ops" : [
+            {
+              "parameters" : [
+                {
+                  "type" : "regular",
+                  "value" : "cpu_out"
+                }
+              ],
+              "op" : "extract"
+            }
+          ],
+          "transitions" : [
+            {
+              "type" : "default",
+              "value" : null,
+              "mask" : null,
+              "next_state" : "parse_ethernet"
+            }
+          ],
+          "transition_key" : []
+        },
+        {
+          "name" : "parse_ethernet",
+          "id" : 2,
+          "parser_ops" : [
+            {
+              "parameters" : [
+                {
+                  "type" : "regular",
+                  "value" : "ethernet"
+                }
+              ],
+              "op" : "extract"
+            }
+          ],
+          "transitions" : [
+            {
+              "type" : "hexstr",
+              "value" : "0x0800",
+              "mask" : null,
+              "next_state" : "parse_ipv4"
+            },
+            {
+              "type" : "default",
+              "value" : null,
+              "mask" : null,
+              "next_state" : null
+            }
+          ],
+          "transition_key" : [
+            {
+              "type" : "field",
+              "value" : ["ethernet", "ether_type"]
+            }
+          ]
+        },
+        {
+          "name" : "parse_ipv4",
+          "id" : 3,
+          "parser_ops" : [
+            {
+              "parameters" : [
+                {
+                  "type" : "regular",
+                  "value" : "ipv4"
+                }
+              ],
+              "op" : "extract"
+            }
+          ],
+          "transitions" : [
+            {
+              "type" : "hexstr",
+              "value" : "0x11",
+              "mask" : null,
+              "next_state" : "parse_udp"
+            },
+            {
+              "type" : "default",
+              "value" : null,
+              "mask" : null,
+              "next_state" : null
+            }
+          ],
+          "transition_key" : [
+            {
+              "type" : "field",
+              "value" : ["ipv4", "protocol"]
+            }
+          ]
+        },
+        {
+          "name" : "parse_udp",
+          "id" : 4,
+          "parser_ops" : [
+            {
+              "parameters" : [
+                {
+                  "type" : "regular",
+                  "value" : "udp"
+                }
+              ],
+              "op" : "extract"
+            }
+          ],
+          "transitions" : [
+            {
+              "type" : "hexstr",
+              "value" : "0x0868",
+              "mask" : null,
+              "next_state" : "parse_gtp"
+            },
+            {
+              "type" : "default",
+              "value" : null,
+              "mask" : null,
+              "next_state" : null
+            }
+          ],
+          "transition_key" : [
+            {
+              "type" : "field",
+              "value" : ["udp", "dstPort"]
+            }
+          ]
+        },
+        {
+          "name" : "parse_gtp",
+          "id" : 5,
+          "parser_ops" : [
+            {
+              "parameters" : [
+                {
+                  "type" : "regular",
+                  "value" : "gtp"
+                }
+              ],
+              "op" : "extract"
+            }
+          ],
+          "transitions" : [
+            {
+              "type" : "hexstr",
+              "value" : "0x34",
+              "mask" : null,
+              "next_state" : "parse_gtp_optional"
+            },
+            {
+              "type" : "default",
+              "value" : null,
+              "mask" : null,
+              "next_state" : null
+            }
+          ],
+          "transition_key" : [
+            {
+              "type" : "field",
+              "value" : ["gtp", "flags"]
+            }
+          ]
+        },
+        {
+          "name" : "parse_gtp_optional",
+          "id" : 6,
+          "parser_ops" : [
+            {
+              "parameters" : [
+                {
+                  "type" : "regular",
+                  "value" : "gtp_optional"
+                }
+              ],
+              "op" : "extract"
+            }
+          ],
+          "transitions" : [
+            {
+              "type" : "hexstr",
+              "value" : "0x85",
+              "mask" : null,
+              "next_state" : "parse_extension_header"
+            },
+            {
+              "type" : "default",
+              "value" : null,
+              "mask" : null,
+              "next_state" : null
+            }
+          ],
+          "transition_key" : [
+            {
+              "type" : "field",
+              "value" : ["gtp_optional", "next_extension_header_type"]
+            }
+          ]
+        },
+        {
+          "name" : "parse_extension_header",
+          "id" : 7,
+          "parser_ops" : [
+            {
+              "parameters" : [
+                {
+                  "type" : "regular",
+                  "value" : "extension_header"
+                }
+              ],
+              "op" : "extract"
+            }
+          ],
+          "transitions" : [
+            {
+              "type" : "hexstr",
+              "value" : "0x01",
+              "mask" : null,
+              "next_state" : "parse_inner_ipv4"
+            },
+            {
+              "type" : "default",
+              "value" : null,
+              "mask" : null,
+              "next_state" : null
+            }
+          ],
+          "transition_key" : [
+            {
+              "type" : "field",
+              "value" : ["extension_header", "QFI"]
+            }
+          ]
+        },
+        {
+          "name" : "parse_inner_ipv4",
+          "id" : 8,
+          "parser_ops" : [
+            {
+              "parameters" : [
+                {
+                  "type" : "regular",
+                  "value" : "inner_ipv4"
+                }
+              ],
+              "op" : "extract"
+            }
+          ],
+          "transitions" : [
+            {
+              "type" : "hexstr",
+              "value" : "0x11",
+              "mask" : null,
+              "next_state" : "parse_inner_udp"
+            },
+            {
+              "type" : "default",
+              "value" : null,
+              "mask" : null,
+              "next_state" : null
+            }
+          ],
+          "transition_key" : [
+            {
+              "type" : "field",
+              "value" : ["inner_ipv4", "protocol"]
+            }
+          ]
+        },
+        {
+          "name" : "parse_inner_udp",
+          "id" : 9,
+          "parser_ops" : [
+            {
+              "parameters" : [
+                {
+                  "type" : "regular",
+                  "value" : "inner_udp"
+                }
+              ],
+              "op" : "extract"
+            }
+          ],
+          "transitions" : [
+            {
+              "type" : "default",
+              "value" : null,
+              "mask" : null,
+              "next_state" : null
+            }
+          ],
+          "transition_key" : []
+        }
+      ]
+    }
+  ],
+  "parse_vsets" : [],
+  "deparsers" : [
+    {
+      "name" : "deparser",
+      "id" : 0,
+      "source_info" : {
+        "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+        "line" : 407,
+        "column" : 8,
+        "source_fragment" : "DeparserImpl"
+      },
+      "order" : ["cpu_in", "ethernet", "ipv4", "udp", "gtp", "gtp_optional", "extension_header", "inner_ipv4", "inner_udp"],
+      "primitives" : []
+    }
+  ],
+  "meter_arrays" : [],
+  "counter_arrays" : [
+    {
+      "name" : "gtp_check_counter",
+      "id" : 0,
+      "source_info" : {
+        "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+        "line" : 268,
+        "column" : 8,
+        "source_fragment" : "counters"
+      },
+      "is_direct" : true,
+      "binding" : "IngressPipeImpl.gtp_check"
+    },
+    {
+      "name" : "gtp_flow_counter",
+      "id" : 1,
+      "source_info" : {
+        "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+        "line" : 300,
+        "column" : 8,
+        "source_fragment" : "counters"
+      },
+      "is_direct" : true,
+      "binding" : "IngressPipeImpl.gtp_flows"
+    },
+    {
+      "name" : "ipv4_check_counter",
+      "id" : 2,
+      "source_info" : {
+        "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+        "line" : 322,
+        "column" : 8,
+        "source_fragment" : "counters"
+      },
+      "is_direct" : true,
+      "binding" : "IngressPipeImpl.ipv4_check"
+    },
+    {
+      "name" : "acl_table_counter",
+      "id" : 3,
+      "source_info" : {
+        "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+        "line" : 347,
+        "column" : 8,
+        "source_fragment" : "counters"
+      },
+      "is_direct" : true,
+      "binding" : "IngressPipeImpl.acl_table"
+    }
+  ],
+  "register_arrays" : [],
+  "calculations" : [],
+  "learn_lists" : [],
+  "actions" : [
+    {
+      "name" : "NoAction",
+      "id" : 0,
+      "runtime_data" : [],
+      "primitives" : []
+    },
+    {
+      "name" : "NoAction",
+      "id" : 1,
+      "runtime_data" : [],
+      "primitives" : []
+    },
+    {
+      "name" : "NoAction",
+      "id" : 2,
+      "runtime_data" : [],
+      "primitives" : []
+    },
+    {
+      "name" : "IngressPipeImpl.drop",
+      "id" : 3,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "mark_to_drop",
+          "parameters" : [
+            {
+              "type" : "header",
+              "value" : "standard_metadata"
+            }
+          ],
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 240,
+            "column" : 8,
+            "source_fragment" : "mark_to_drop(standard_metadata)"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "dropped_0"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "b2d",
+                  "left" : null,
+                  "right" : {
+                    "type" : "bool",
+                    "value" : true
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 241,
+            "column" : 8,
+            "source_fragment" : "dropped = true"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "acl_0"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "b2d",
+                  "left" : null,
+                  "right" : {
+                    "type" : "bool",
+                    "value" : false
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 242,
+            "column" : 8,
+            "source_fragment" : "acl = false"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "pass_0"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "b2d",
+                  "left" : null,
+                  "right" : {
+                    "type" : "bool",
+                    "value" : false
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 243,
+            "column" : 8,
+            "source_fragment" : "pass = false"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "IngressPipeImpl.drop",
+      "id" : 4,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "mark_to_drop",
+          "parameters" : [
+            {
+              "type" : "header",
+              "value" : "standard_metadata"
+            }
+          ],
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 240,
+            "column" : 8,
+            "source_fragment" : "mark_to_drop(standard_metadata)"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "acl_0"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "b2d",
+                  "left" : null,
+                  "right" : {
+                    "type" : "bool",
+                    "value" : false
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 242,
+            "column" : 8,
+            "source_fragment" : "acl = false"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "pass_0"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "b2d",
+                  "left" : null,
+                  "right" : {
+                    "type" : "bool",
+                    "value" : false
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 243,
+            "column" : 8,
+            "source_fragment" : "pass = false"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "IngressPipeImpl.drop",
+      "id" : 5,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "mark_to_drop",
+          "parameters" : [
+            {
+              "type" : "header",
+              "value" : "standard_metadata"
+            }
+          ],
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 240,
+            "column" : 8,
+            "source_fragment" : "mark_to_drop(standard_metadata)"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "acl_0"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "b2d",
+                  "left" : null,
+                  "right" : {
+                    "type" : "bool",
+                    "value" : false
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 242,
+            "column" : 8,
+            "source_fragment" : "acl = false"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "IngressPipeImpl.drop",
+      "id" : 6,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "mark_to_drop",
+          "parameters" : [
+            {
+              "type" : "header",
+              "value" : "standard_metadata"
+            }
+          ],
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 240,
+            "column" : 8,
+            "source_fragment" : "mark_to_drop(standard_metadata)"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "IngressPipeImpl.send_to_port",
+      "id" : 7,
+      "runtime_data" : [
+        {
+          "name" : "port_num",
+          "bitwidth" : 9
+        }
+      ],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["standard_metadata", "egress_spec"]
+            },
+            {
+              "type" : "runtime_data",
+              "value" : 0
+            }
+          ],
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 247,
+            "column" : 8,
+            "source_fragment" : "standard_metadata.egress_spec = port_num"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "IngressPipeImpl.set_gtp",
+      "id" : 8,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "gtp_0"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "b2d",
+                  "left" : null,
+                  "right" : {
+                    "type" : "bool",
+                    "value" : true
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 251,
+            "column" : 8,
+            "source_fragment" : "gtp = true"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "acl_0"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "b2d",
+                  "left" : null,
+                  "right" : {
+                    "type" : "bool",
+                    "value" : true
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 252,
+            "column" : 8,
+            "source_fragment" : "acl = true"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "pass_0"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "b2d",
+                  "left" : null,
+                  "right" : {
+                    "type" : "bool",
+                    "value" : false
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 253,
+            "column" : 8,
+            "source_fragment" : "pass = false"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "IngressPipeImpl.track_gtp_flows",
+      "id" : 9,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "acl_0"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "b2d",
+                  "left" : null,
+                  "right" : {
+                    "type" : "bool",
+                    "value" : false
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 282,
+            "column" : 8,
+            "source_fragment" : "acl = false"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "pass_0"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "b2d",
+                  "left" : null,
+                  "right" : {
+                    "type" : "bool",
+                    "value" : true
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 283,
+            "column" : 5,
+            "source_fragment" : "pass = true"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "IngressPipeImpl.send_to_cpu",
+      "id" : 10,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["standard_metadata", "egress_spec"]
+            },
+            {
+              "type" : "hexstr",
+              "value" : "0x00ff"
+            }
+          ],
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 326,
+            "column" : 8,
+            "source_fragment" : "standard_metadata.egress_spec = 255"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "IngressPipeImpl.clone_to_cpu",
+      "id" : 11,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "clone_ingress_pkt_to_egress",
+          "parameters" : [
+            {
+              "type" : "hexstr",
+              "value" : "0x00000063"
+            },
+            {
+              "type" : "hexstr",
+              "value" : "0x1"
+            }
+          ],
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 330,
+            "column" : 8,
+            "source_fragment" : "clone_preserving_field_list(CloneType.I2E, 99,1)"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "onosp4gtp351",
+      "id" : 12,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["standard_metadata", "egress_spec"]
+            },
+            {
+              "type" : "field",
+              "value" : ["cpu_out", "egress_port"]
+            }
+          ],
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 351,
+            "column" : 12,
+            "source_fragment" : "standard_metadata.egress_spec = hdr.cpu_out.egress_port"
+          }
+        },
+        {
+          "op" : "remove_header",
+          "parameters" : [
+            {
+              "type" : "header",
+              "value" : "cpu_out"
+            }
+          ],
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 352,
+            "column" : 12,
+            "source_fragment" : "hdr.cpu_out.setInvalid()"
+          }
+        },
+        {
+          "op" : "exit",
+          "parameters" : [],
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 353,
+            "column" : 12,
+            "source_fragment" : "exit"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "onosp4gtp233",
+      "id" : 13,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "dropped_0"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "b2d",
+                  "left" : null,
+                  "right" : {
+                    "type" : "bool",
+                    "value" : false
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 233,
+            "column" : 4,
+            "source_fragment" : "bool dropped = false;"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "acl_0"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "b2d",
+                  "left" : null,
+                  "right" : {
+                    "type" : "bool",
+                    "value" : false
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 234,
+            "column" : 4,
+            "source_fragment" : "bool acl = false;"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "gtp_0"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "b2d",
+                  "left" : null,
+                  "right" : {
+                    "type" : "bool",
+                    "value" : false
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 235,
+            "column" : 4,
+            "source_fragment" : "bool gtp = false;"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["scalars", "pass_0"]
+            },
+            {
+              "type" : "expression",
+              "value" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "b2d",
+                  "left" : null,
+                  "right" : {
+                    "type" : "bool",
+                    "value" : true
+                  }
+                }
+              }
+            }
+          ],
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 236,
+            "column" : 4,
+            "source_fragment" : "bool pass = true;"
+          }
+        }
+      ]
+    },
+    {
+      "name" : "onosp4gtp389",
+      "id" : 14,
+      "runtime_data" : [],
+      "primitives" : [
+        {
+          "op" : "add_header",
+          "parameters" : [
+            {
+              "type" : "header",
+              "value" : "cpu_in"
+            }
+          ],
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 389,
+            "column" : 12,
+            "source_fragment" : "hdr.cpu_in.setValid()"
+          }
+        },
+        {
+          "op" : "assign",
+          "parameters" : [
+            {
+              "type" : "field",
+              "value" : ["cpu_in", "ingress_port"]
+            },
+            {
+              "type" : "field",
+              "value" : ["scalars", "metadata.ingress_port"]
+            }
+          ],
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 390,
+            "column" : 12,
+            "source_fragment" : "hdr.cpu_in.ingress_port = meta.ingress_port"
+          }
+        },
+        {
+          "op" : "exit",
+          "parameters" : [],
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 391,
+            "column" : 12,
+            "source_fragment" : "exit"
+          }
+        }
+      ]
+    }
+  ],
+  "pipelines" : [
+    {
+      "name" : "ingress",
+      "id" : 0,
+      "source_info" : {
+        "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+        "line" : 229,
+        "column" : 8,
+        "source_fragment" : "IngressPipeImpl"
+      },
+      "init_table" : "tbl_onosp4gtp233",
+      "tables" : [
+        {
+          "name" : "tbl_onosp4gtp233",
+          "id" : 0,
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 233,
+            "column" : 4,
+            "source_fragment" : "bool dropped = false; ..."
+          },
+          "key" : [],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [13],
+          "actions" : ["onosp4gtp233"],
+          "base_default_next" : "node_3",
+          "next_tables" : {
+            "onosp4gtp233" : "node_3"
+          },
+          "default_entry" : {
+            "action_id" : 13,
+            "action_const" : true,
+            "action_data" : [],
+            "action_entry_const" : true
+          }
+        },
+        {
+          "name" : "tbl_onosp4gtp351",
+          "id" : 1,
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 351,
+            "column" : 42,
+            "source_fragment" : "= hdr.cpu_out.egress_port; ..."
+          },
+          "key" : [],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [12],
+          "actions" : ["onosp4gtp351"],
+          "base_default_next" : "node_5",
+          "next_tables" : {
+            "onosp4gtp351" : "node_5"
+          },
+          "default_entry" : {
+            "action_id" : 12,
+            "action_const" : true,
+            "action_data" : [],
+            "action_entry_const" : true
+          }
+        },
+        {
+          "name" : "IngressPipeImpl.gtp_check",
+          "id" : 2,
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 256,
+            "column" : 10,
+            "source_fragment" : "gtp_check"
+          },
+          "key" : [
+            {
+              "match_type" : "exact",
+              "name" : "hdr.udp.dstPort",
+              "target" : ["udp", "dstPort"],
+              "mask" : null
+            },
+            {
+              "match_type" : "exact",
+              "name" : "hdr.udp.srcPort",
+              "target" : ["udp", "srcPort"],
+              "mask" : null
+            }
+          ],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1,
+          "with_counters" : true,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [8, 0],
+          "actions" : ["IngressPipeImpl.set_gtp", "NoAction"],
+          "base_default_next" : "node_7",
+          "next_tables" : {
+            "IngressPipeImpl.set_gtp" : "node_7",
+            "NoAction" : "node_7"
+          },
+          "default_entry" : {
+            "action_id" : 0,
+            "action_const" : false,
+            "action_data" : [],
+            "action_entry_const" : false
+          },
+          "entries" : [
+            {
+              "source_info" : {
+                "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+                "line" : 265,
+                "column" : 12,
+                "source_fragment" : "{2152, 2152}: set_gtp()"
+              },
+              "match_key" : [
+                {
+                  "match_type" : "exact",
+                  "key" : "0x0868"
+                },
+                {
+                  "match_type" : "exact",
+                  "key" : "0x0868"
+                }
+              ],
+              "action_entry" : {
+                "action_id" : 8,
+                "action_data" : []
+              },
+              "priority" : 1
+            }
+          ]
+        },
+        {
+          "name" : "IngressPipeImpl.dropped_inner_ipv4",
+          "id" : 3,
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 272,
+            "column" : 10,
+            "source_fragment" : "dropped_inner_ipv4"
+          },
+          "key" : [
+            {
+              "match_type" : "exact",
+              "name" : "hdr.inner_ipv4.src_addr",
+              "target" : ["inner_ipv4", "src_addr"],
+              "mask" : null
+            }
+          ],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [3, 1],
+          "actions" : ["IngressPipeImpl.drop", "NoAction"],
+          "base_default_next" : "node_9",
+          "next_tables" : {
+            "IngressPipeImpl.drop" : "node_9",
+            "NoAction" : "node_9"
+          },
+          "default_entry" : {
+            "action_id" : 1,
+            "action_const" : false,
+            "action_data" : [],
+            "action_entry_const" : false
+          }
+        },
+        {
+          "name" : "IngressPipeImpl.gtp_flows",
+          "id" : 4,
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 289,
+            "column" : 10,
+            "source_fragment" : "gtp_flows"
+          },
+          "key" : [
+            {
+              "match_type" : "exact",
+              "name" : "hdr.inner_ipv4.src_addr",
+              "target" : ["inner_ipv4", "src_addr"],
+              "mask" : null
+            },
+            {
+              "match_type" : "exact",
+              "name" : "hdr.inner_ipv4.dst_addr",
+              "target" : ["inner_ipv4", "dst_addr"],
+              "mask" : null
+            },
+            {
+              "match_type" : "exact",
+              "name" : "hdr.inner_ipv4.protocol",
+              "target" : ["inner_ipv4", "protocol"],
+              "mask" : null
+            }
+          ],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : true,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [4, 9, 2],
+          "actions" : ["IngressPipeImpl.drop", "IngressPipeImpl.track_gtp_flows", "NoAction"],
+          "base_default_next" : "node_11",
+          "next_tables" : {
+            "IngressPipeImpl.drop" : "node_11",
+            "IngressPipeImpl.track_gtp_flows" : "node_11",
+            "NoAction" : "node_11"
+          },
+          "default_entry" : {
+            "action_id" : 2,
+            "action_const" : false,
+            "action_data" : [],
+            "action_entry_const" : false
+          }
+        },
+        {
+          "name" : "IngressPipeImpl.ipv4_check",
+          "id" : 5,
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 305,
+            "column" : 10,
+            "source_fragment" : "ipv4_check"
+          },
+          "key" : [
+            {
+              "match_type" : "exact",
+              "name" : "hdr.ipv4.dst_addr",
+              "target" : ["ipv4", "dst_addr"],
+              "mask" : null
+            }
+          ],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 5,
+          "with_counters" : true,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [5, 7],
+          "actions" : ["IngressPipeImpl.drop", "IngressPipeImpl.send_to_port"],
+          "base_default_next" : "node_13",
+          "next_tables" : {
+            "IngressPipeImpl.drop" : "node_13",
+            "IngressPipeImpl.send_to_port" : "node_13"
+          },
+          "default_entry" : {
+            "action_id" : 7,
+            "action_const" : false,
+            "action_data" : ["0x5"],
+            "action_entry_const" : false
+          },
+          "entries" : [
+            {
+              "source_info" : {
+                "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+                "line" : 315,
+                "column" : 12,
+                "source_fragment" : "{0xC0A8EB02}: send_to_port(0)"
+              },
+              "match_key" : [
+                {
+                  "match_type" : "exact",
+                  "key" : "0xc0a8eb02"
+                }
+              ],
+              "action_entry" : {
+                "action_id" : 7,
+                "action_data" : ["0x0"]
+              },
+              "priority" : 1
+            },
+            {
+              "source_info" : {
+                "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+                "line" : 316,
+                "column" : 12,
+                "source_fragment" : "{0xC0A8EB03}: send_to_port(1)"
+              },
+              "match_key" : [
+                {
+                  "match_type" : "exact",
+                  "key" : "0xc0a8eb03"
+                }
+              ],
+              "action_entry" : {
+                "action_id" : 7,
+                "action_data" : ["0x1"]
+              },
+              "priority" : 2
+            },
+            {
+              "source_info" : {
+                "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+                "line" : 317,
+                "column" : 12,
+                "source_fragment" : "{0xC0A8EB04}: send_to_port(2)"
+              },
+              "match_key" : [
+                {
+                  "match_type" : "exact",
+                  "key" : "0xc0a8eb04"
+                }
+              ],
+              "action_entry" : {
+                "action_id" : 7,
+                "action_data" : ["0x2"]
+              },
+              "priority" : 3
+            },
+            {
+              "source_info" : {
+                "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+                "line" : 318,
+                "column" : 12,
+                "source_fragment" : "{0xC0A8EB05}: send_to_port(3)"
+              },
+              "match_key" : [
+                {
+                  "match_type" : "exact",
+                  "key" : "0xc0a8eb05"
+                }
+              ],
+              "action_entry" : {
+                "action_id" : 7,
+                "action_data" : ["0x3"]
+              },
+              "priority" : 4
+            },
+            {
+              "source_info" : {
+                "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+                "line" : 319,
+                "column" : 12,
+                "source_fragment" : "{0xC0A8EB06}: send_to_port(4)"
+              },
+              "match_key" : [
+                {
+                  "match_type" : "exact",
+                  "key" : "0xc0a8eb06"
+                }
+              ],
+              "action_entry" : {
+                "action_id" : 7,
+                "action_data" : ["0x4"]
+              },
+              "priority" : 5
+            }
+          ]
+        },
+        {
+          "name" : "IngressPipeImpl.acl_table",
+          "id" : 6,
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 333,
+            "column" : 10,
+            "source_fragment" : "acl_table"
+          },
+          "key" : [
+            {
+              "match_type" : "ternary",
+              "name" : "standard_metadata.ingress_port",
+              "target" : ["standard_metadata", "ingress_port"],
+              "mask" : null
+            },
+            {
+              "match_type" : "ternary",
+              "name" : "hdr.ethernet.dst_addr",
+              "target" : ["ethernet", "dst_addr"],
+              "mask" : null
+            },
+            {
+              "match_type" : "ternary",
+              "name" : "hdr.ethernet.src_addr",
+              "target" : ["ethernet", "src_addr"],
+              "mask" : null
+            },
+            {
+              "match_type" : "ternary",
+              "name" : "hdr.ethernet.ether_type",
+              "target" : ["ethernet", "ether_type"],
+              "mask" : null
+            }
+          ],
+          "match_type" : "ternary",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : true,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [10, 11, 6],
+          "actions" : ["IngressPipeImpl.send_to_cpu", "IngressPipeImpl.clone_to_cpu", "IngressPipeImpl.drop"],
+          "base_default_next" : null,
+          "next_tables" : {
+            "IngressPipeImpl.send_to_cpu" : null,
+            "IngressPipeImpl.clone_to_cpu" : null,
+            "IngressPipeImpl.drop" : null
+          },
+          "default_entry" : {
+            "action_id" : 10,
+            "action_const" : false,
+            "action_data" : [],
+            "action_entry_const" : false
+          }
+        }
+      ],
+      "action_profiles" : [],
+      "conditionals" : [
+        {
+          "name" : "node_3",
+          "id" : 0,
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 350,
+            "column" : 11,
+            "source_fragment" : "hdr.cpu_out.isValid()"
+          },
+          "expression" : {
+            "type" : "expression",
+            "value" : {
+              "op" : "d2b",
+              "left" : null,
+              "right" : {
+                "type" : "field",
+                "value" : ["cpu_out", "$valid$"]
+              }
+            }
+          },
+          "true_next" : "tbl_onosp4gtp351",
+          "false_next" : "node_5"
+        },
+        {
+          "name" : "node_5",
+          "id" : 1,
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 355,
+            "column" : 11,
+            "source_fragment" : "hdr.ethernet.isValid() && hdr.ipv4.isValid()"
+          },
+          "expression" : {
+            "type" : "expression",
+            "value" : {
+              "op" : "and",
+              "left" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "d2b",
+                  "left" : null,
+                  "right" : {
+                    "type" : "field",
+                    "value" : ["ethernet", "$valid$"]
+                  }
+                }
+              },
+              "right" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "d2b",
+                  "left" : null,
+                  "right" : {
+                    "type" : "field",
+                    "value" : ["ipv4", "$valid$"]
+                  }
+                }
+              }
+            }
+          },
+          "true_next" : "IngressPipeImpl.gtp_check",
+          "false_next" : "node_13"
+        },
+        {
+          "name" : "node_7",
+          "id" : 2,
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 357,
+            "column" : 15,
+            "source_fragment" : "gtp"
+          },
+          "expression" : {
+            "type" : "expression",
+            "value" : {
+              "op" : "d2b",
+              "left" : null,
+              "right" : {
+                "type" : "field",
+                "value" : ["scalars", "gtp_0"]
+              }
+            }
+          },
+          "true_next" : "IngressPipeImpl.dropped_inner_ipv4",
+          "false_next" : "node_9"
+        },
+        {
+          "name" : "node_9",
+          "id" : 3,
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 360,
+            "column" : 15,
+            "source_fragment" : "dropped == false && gtp == true"
+          },
+          "expression" : {
+            "type" : "expression",
+            "value" : {
+              "op" : "and",
+              "left" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "not",
+                  "left" : null,
+                  "right" : {
+                    "type" : "expression",
+                    "value" : {
+                      "op" : "d2b",
+                      "left" : null,
+                      "right" : {
+                        "type" : "field",
+                        "value" : ["scalars", "dropped_0"]
+                      }
+                    }
+                  }
+                }
+              },
+              "right" : {
+                "type" : "expression",
+                "value" : {
+                  "op" : "d2b",
+                  "left" : null,
+                  "right" : {
+                    "type" : "field",
+                    "value" : ["scalars", "gtp_0"]
+                  }
+                }
+              }
+            }
+          },
+          "true_next" : "IngressPipeImpl.gtp_flows",
+          "false_next" : "node_11"
+        },
+        {
+          "name" : "node_11",
+          "id" : 4,
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 363,
+            "column" : 15,
+            "source_fragment" : "pass"
+          },
+          "expression" : {
+            "type" : "expression",
+            "value" : {
+              "op" : "d2b",
+              "left" : null,
+              "right" : {
+                "type" : "field",
+                "value" : ["scalars", "pass_0"]
+              }
+            }
+          },
+          "true_next" : "IngressPipeImpl.ipv4_check",
+          "false_next" : "node_13"
+        },
+        {
+          "name" : "node_13",
+          "id" : 5,
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 367,
+            "column" : 11,
+            "source_fragment" : "acl"
+          },
+          "expression" : {
+            "type" : "expression",
+            "value" : {
+              "op" : "d2b",
+              "left" : null,
+              "right" : {
+                "type" : "field",
+                "value" : ["scalars", "acl_0"]
+              }
+            }
+          },
+          "false_next" : null,
+          "true_next" : "IngressPipeImpl.acl_table"
+        }
+      ]
+    },
+    {
+      "name" : "egress",
+      "id" : 1,
+      "source_info" : {
+        "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+        "line" : 375,
+        "column" : 8,
+        "source_fragment" : "EgressPipeImpl"
+      },
+      "init_table" : "node_17",
+      "tables" : [
+        {
+          "name" : "tbl_onosp4gtp389",
+          "id" : 7,
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 389,
+            "column" : 12,
+            "source_fragment" : "hdr.cpu_in.setValid(); ..."
+          },
+          "key" : [],
+          "match_type" : "exact",
+          "type" : "simple",
+          "max_size" : 1024,
+          "with_counters" : false,
+          "support_timeout" : false,
+          "direct_meters" : null,
+          "action_ids" : [14],
+          "actions" : ["onosp4gtp389"],
+          "base_default_next" : null,
+          "next_tables" : {
+            "onosp4gtp389" : null
+          },
+          "default_entry" : {
+            "action_id" : 14,
+            "action_const" : true,
+            "action_data" : [],
+            "action_entry_const" : true
+          }
+        }
+      ],
+      "action_profiles" : [],
+      "conditionals" : [
+        {
+          "name" : "node_17",
+          "id" : 6,
+          "source_info" : {
+            "filename" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4",
+            "line" : 380,
+            "column" : 12,
+            "source_fragment" : "standard_metadata.egress_port == 255"
+          },
+          "expression" : {
+            "type" : "expression",
+            "value" : {
+              "op" : "==",
+              "left" : {
+                "type" : "field",
+                "value" : ["standard_metadata", "egress_port"]
+              },
+              "right" : {
+                "type" : "hexstr",
+                "value" : "0x00ff"
+              }
+            }
+          },
+          "false_next" : null,
+          "true_next" : "tbl_onosp4gtp389"
+        }
+      ]
+    }
+  ],
+  "checksums" : [],
+  "force_arith" : [],
+  "extern_instances" : [],
+  "field_aliases" : [
+    [
+      "queueing_metadata.enq_timestamp",
+      ["standard_metadata", "enq_timestamp"]
+    ],
+    [
+      "queueing_metadata.enq_qdepth",
+      ["standard_metadata", "enq_qdepth"]
+    ],
+    [
+      "queueing_metadata.deq_timedelta",
+      ["standard_metadata", "deq_timedelta"]
+    ],
+    [
+      "queueing_metadata.deq_qdepth",
+      ["standard_metadata", "deq_qdepth"]
+    ],
+    [
+      "intrinsic_metadata.ingress_global_timestamp",
+      ["standard_metadata", "ingress_global_timestamp"]
+    ],
+    [
+      "intrinsic_metadata.egress_global_timestamp",
+      ["standard_metadata", "egress_global_timestamp"]
+    ],
+    [
+      "intrinsic_metadata.mcast_grp",
+      ["standard_metadata", "mcast_grp"]
+    ],
+    [
+      "intrinsic_metadata.egress_rid",
+      ["standard_metadata", "egress_rid"]
+    ],
+    [
+      "intrinsic_metadata.priority",
+      ["standard_metadata", "priority"]
+    ]
+  ],
+  "program" : "/home/ubuntu/5G-SDN-DDoS-Detection-Mitigation/approach2/p4-code/onos-p4-gtp.p4i",
+  "__meta__" : {
+    "version" : [2, 23],
+    "compiler" : "https://github.com/p4lang/p4c"
+  }
+}

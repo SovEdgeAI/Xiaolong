@@ -22,6 +22,9 @@ services:
     build:
       context: ./server
       dockerfile: Dockerfile
+      args:
+        # true = include torch + AnyJev for LLM_MODEL=anyjev (image ~2 GB larger)
+        WITH_JEV: ${WITH_JEV:-false}
     container_name: ra3-server
     restart: unless-stopped
     depends_on:
@@ -37,6 +40,32 @@ services:
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
       MCP_SERVER_URL: ${MCP_SERVER_URL:-http://mcp:9000/mcp}
       EXECUTION_ENABLED: ${EXECUTION_ENABLED:-true}
+      # --- local decision model (LLM_MODEL=anyjev, image built with WITH_JEV=true)
+      JEV_MODEL: ${JEV_MODEL:-Qwen/Qwen3-4B}
+      JEV_THRESHOLD: ${JEV_THRESHOLD:-0.5}
+      JEV_PRIOR: ${JEV_PRIOR:-none}
+      # L1/L2 artifacts from scripts/jev_fit.py, mounted below; JEV_MAX_LEVEL picks the level
+      JEV_ARTIFACTS: ${JEV_ARTIFACTS_IN_CONTAINER:-/app/artifacts/jev_artifacts.json}
+      JEV_MAX_LEVEL: ${JEV_MAX_LEVEL:-L2}
+      # --- fine-tuning jobs (POST /training/jobs; see server/training.py)
+      FINETUNE_ENABLED: ${FINETUNE_ENABLED:-true}
+      FINETUNE_BASE_MODEL: ${FINETUNE_BASE_MODEL:-}
+      FINETUNE_DATASET: ${FINETUNE_DATASET:-teacher_labels.jsonl}
+      FINETUNE_TRIGGER_EVERY: ${FINETUNE_TRIGGER_EVERY:-0}
+      FINETUNE_AUTO_MODE: ${FINETUNE_AUTO_MODE:-dry_run}
+      JEV_RESTRICT_TO_CATALOG: ${JEV_RESTRICT_TO_CATALOG:-true}
+      JEV_EXPLAIN: ${JEV_EXPLAIN:-true}
+      JEV_EXPLAIN_MAX_TOKENS: ${JEV_EXPLAIN_MAX_TOKENS:-384}
+      JEV_THREADS: ${JEV_THREADS:-}
+      HF_HOME: /hf
+      HF_HUB_OFFLINE: ${HF_HUB_OFFLINE:-1}
+    volumes:
+      # host Hugging Face cache (weights downloaded once, not baked into the image)
+      - ${HF_CACHE_DIR:-~/.cache/huggingface}:/hf
+      # fitted L1/L2 artifacts (read-only; refit on the host, then restart the server)
+      - ./artifacts:/app/artifacts:ro
+    # Qwen3-4B in bf16 needs ~9 GB; cap the container so it cannot starve the WSL VM
+    mem_limit: ${SERVER_MEM_LIMIT:-12g}
     ports:
       - "8000:8000"
 
@@ -52,9 +81,24 @@ services:
     environment:
       EXECUTOR_IMAGE: ${EXECUTOR_IMAGE:-ra3-executor:latest}
       EXECUTOR_MEM_LIMIT: ${EXECUTOR_MEM_LIMIT:-128m}
+      # mock (default): simulate actions, executor stays network-isolated.
+      # testbed: enforce on the 5G SDN DDoS testbed via the testbed-agent.
+      EXECUTOR_MODE: ${EXECUTOR_MODE:-mock}
+      AGENT_URL: ${AGENT_URL:-http://172.17.0.1:8090}
+      TESTBED_UE_IP: ${TESTBED_UE_IP:-10.45.0.3}
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      # --- fine-tuning jobs (training_* MCP tools; trainer containers are siblings,
+      #     so data / model mounts need HOST paths)
+      TRAINER_IMAGE: ${TRAINER_IMAGE:-ra3-trainer:latest}
+      TRAINER_MEM_LIMIT: ${TRAINER_MEM_LIMIT:-2g}
+      TRAINER_GPU: ${TRAINER_GPU:-false}
+      TRAINING_VOLUME: ra3-training
+      TRAINING_DIR: /training
+      TRAINER_DATA_HOST_DIR: ${TRAINER_DATA_HOST_DIR:-${PWD}/artifacts}
+      TRAINER_HF_HOST_DIR: ${TRAINER_HF_HOST_DIR:-${HOME}/.cache/huggingface}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - ra3-training:/training
     ports:
       - "9000:9000"
 
@@ -70,6 +114,17 @@ services:
     restart: "no"
     entrypoint: ["python", "-c", "print('ra3-executor image ready; launched ephemerally by the mcp service')"]
 
+  # Build target only: produces `ra3-trainer:latest`, which the mcp service runs
+  # detached, one container per fine-tuning job. Exits immediately on `up`.
+  trainer:
+    build:
+      context: ./trainer
+      dockerfile: Dockerfile
+    image: ra3-trainer:latest
+    container_name: ra3-trainer-build
+    restart: "no"
+    entrypoint: ["python", "-c", "print('ra3-trainer image ready; launched per job by the mcp service')"]
+
   client:
     build:
       context: ./client
@@ -79,9 +134,14 @@ services:
       - server
     environment:
       RA3_SERVER_URL: ${RA3_SERVER_URL:-http://server:8000}
+      RA3_REQUEST_TIMEOUT: ${RA3_REQUEST_TIMEOUT:-60}
     # By default just simulate once; override the command to loop, e.g.:
     #   docker compose run --rm client python simulate.py --loop --interval 5
     command: ["python", "simulate.py", "--loop", "--interval", "10"]
 
 volumes:
   ra3-db-data:
+  # job directories shared by the mcp service and the trainer containers;
+  # fixed name so the trainers can mount it by name
+  ra3-training:
+    name: ra3-training

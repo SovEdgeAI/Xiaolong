@@ -1,0 +1,29 @@
+smf:
+  sbi:
+    - dev: veth1
+      advertise: 192.168.235.2
+      port: 7779
+  pfcp:
+    - dev: veth3
+  gtpc:
+    - dev: veth3
+  gtpu:
+    - dev: veth3
+  subnet:
+    - addr: 10.45.0.1/16
+      dnn: internet
+  dns:
+    - 8.8.8.8
+    - 8.8.4.4
+  mtu: 1400
+nrf:
+  sbi:
+    - addr: 192.168.235.2
+      port: 7777
+upf:
+  pfcp:
+    - addr: 192.168.235.4
+parameter:
+max:
+pool:
+time:

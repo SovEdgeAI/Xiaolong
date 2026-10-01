@@ -1,0 +1,22 @@
+      2 QFI : 
+      2 Precedence: 255
+      2 Precedence : 255
+      1 UL MBR: 1073741
+      1 SDF Filter : 
+      1 Precedence: 1000
+      1 Precedence : 1000
+      1 Precedence: 1
+      1 Precedence : 1
+      1 MBR : 
+      1 Gate Status : 
+      1 Flow Description: permit out 58 from ff02::2/128 to assigned
+      1 DL MBR: 1073741
+      1 Create URR : [Grouped IE]: URR ID: Dynamic by CP 1
+      1 Create QER : [Grouped IE]: QER ID: Dynamic by CP 1
+      1 Create PDR : [Grouped IE]: PDR ID: 4
+      1 Create PDR : [Grouped IE]: PDR ID: 3
+      1 Create PDR : [Grouped IE]: PDR ID: 2
+      1 Create PDR : [Grouped IE]: PDR ID: 1
+      1 Create FAR : [Grouped IE]: FAR ID: Dynamic by CP 3
+      1 Create FAR : [Grouped IE]: FAR ID: Dynamic by CP 2
+      1 Create FAR : [Grouped IE]: FAR ID: Dynamic by CP 1

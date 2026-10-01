@@ -1,4 +1,4 @@
-"""SQLAlchemy ORM models for the RA3 system (3 tables)."""
+"""SQLAlchemy ORM models for the RA3 system (4 tables)."""
 
 from __future__ import annotations
 
@@ -105,3 +105,26 @@ class Response(Base):
     )
 
     incident: Mapped["Incident"] = relationship(back_populates="responses")
+
+
+class TrainingJob(Base):
+    """A fine-tuning job for the local decision model (not an incident response)."""
+
+    __tablename__ = "training_jobs"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    # queued -> running -> succeeded | failed | lost
+    status: Mapped[str] = mapped_column(String(20), nullable=False, default="queued")
+    trigger: Mapped[str] = mapped_column(String(50), nullable=False)   # manual | auto:<rule>
+    mode: Mapped[str] = mapped_column(String(20), nullable=False)      # dry_run | train
+    spec: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    result: Mapped[dict | None] = mapped_column(JSONB, nullable=True)  # trainer status.json
+    error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.now()
+    )

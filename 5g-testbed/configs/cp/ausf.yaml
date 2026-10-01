@@ -1,0 +1,15 @@
+ausf:
+  sbi:
+    - dev: eth1
+      advertise: 192.168.230.3
+      port: 7781
+
+nrf:
+  sbi:
+    - addr: 192.168.230.3
+      port: 7777
+
+parameter:
+max:
+pool:
+time:

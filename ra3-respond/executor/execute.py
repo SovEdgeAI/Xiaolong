@@ -15,13 +15,46 @@ from __future__ import annotations
 
 import json
 import os
+import socket
 import sys
+import time
+from datetime import datetime, timezone
 
-from handlers import HANDLERS
+# EXECUTOR_MODE=testbed swaps the mock handlers for ones that enforce on the
+# 5G testbed via the testbed-agent; default stays mock (simulate + isolated).
+if os.environ.get("EXECUTOR_MODE") == "testbed":
+    from testbed import HANDLERS
+else:
+    from handlers import HANDLERS
+
+STARTED = time.time()
+
+
+def _read(path: str) -> str | None:
+    try:
+        with open(path) as f:
+            return f.read().strip()
+    except OSError:
+        return None
+
+
+def _runtime(started: float) -> dict:
+    """Evidence of where the action ran: Docker sets the hostname to the short
+    container id; with --network none only the loopback interface exists; the
+    cgroup file shows the memory cap applied by the runner."""
+    return {
+        "container_hostname": socket.gethostname(),
+        "pid": os.getpid(),
+        "network_interfaces": sorted(os.listdir("/sys/class/net")) if os.path.isdir("/sys/class/net") else None,
+        "memory_limit_bytes": _read("/sys/fs/cgroup/memory.max"),
+        "started_at": datetime.fromtimestamp(started, timezone.utc).isoformat(),
+        "finished_at": datetime.now(timezone.utc).isoformat(),
+    }
 
 
 def _emit(payload: dict) -> None:
     # A single JSON line on stdout is what the MCP runner parses.
+    payload["runtime"] = _runtime(STARTED)
     print(json.dumps(payload))
 
 

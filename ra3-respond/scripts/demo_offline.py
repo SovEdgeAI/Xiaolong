@@ -56,7 +56,7 @@ def run(attack_type: str) -> bool:
                       "severity": severity, "confidence": confidence,
                       "metadata": metadata}, indent=2))
 
-    print("\n[STEP 2] Decision engine (llm.decide_actions, mock mode):")
+    print(f"\n[STEP 2] Decision engine (llm.decide_actions, LLM_MODEL={llm.MODEL}):")
     decision = llm.decide_actions(incident_id, client_id, attack_type,
                                   severity, confidence, metadata)
     for a in decision["selected_actions"]:

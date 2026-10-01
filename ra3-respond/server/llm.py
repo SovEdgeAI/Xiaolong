@@ -99,6 +99,11 @@ def _is_mock() -> bool:
     )
 
 
+def _is_anyjev() -> bool:
+    """Local open-source model via AnyJev logit readout (see jev_decider.py)."""
+    return MODEL.strip().lower() == "anyjev"
+
+
 def _get_client():
     from openai import OpenAI  # lazy import; not needed in mock mode
 
@@ -219,6 +224,16 @@ def decide_actions(
     if _is_mock():
         logger.info("LLM mock mode active — deciding via built-in rules")
         return _mock_decide(incident_id, client_id, attack_type, severity, confidence, metadata)
+
+    if _is_anyjev():
+        import jev_decider  # lazy: pulls in torch/transformers
+
+        try:
+            return jev_decider.decide_actions(
+                incident_id, client_id, attack_type, severity, confidence, metadata
+            )
+        except jev_decider.JevError as exc:
+            raise LLMError(str(exc)) from exc
 
     client = _get_client()
     tools = get_openai_tools()

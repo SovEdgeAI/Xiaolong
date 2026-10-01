@@ -183,6 +183,130 @@ It prints, for each alert: the incoming report → the chosen actions (with
 metadata-driven parameters and reasons) → the simulated execution result → a
 PASS/FAIL verdict against the mandatory rules.
 
+### Local open-source decision model (AnyJev, no API key)
+
+Set `LLM_MODEL=anyjev` to decide with a local Hugging Face model (default
+`Qwen/Qwen3-4B`, runs on CPU) through [AnyJev](https://github.com/nokia-applied-research/AnyJev)
+logit readout instead of function calling:
+
+* every candidate action is one yes/no question; its `P(yes)` is read from the
+  next-token logits (no generation) and debiased across both phrasing orders;
+* actions with `P(yes) >= JEV_THRESHOLD` are selected, so each alert gets
+  **1..N actions**. Execution order (the MCP client runs them sequentially by
+  `order`): mitigations by model certainty (log-odds, ties by catalog order),
+  then `share_threat_intel`, then `alert_operator`, then `log_incident`;
+* hard rules stay in code: `log_incident` always (last), `alert_operator` on
+  high/critical, at least one mitigation (the most likely one, flagged
+  low-confidence, if none clears the threshold);
+* numeric parameters use the metadata-proportional formulas of the mock engine;
+* once the decision is fixed, the same model writes English rationales as
+  JSON. The response gets a structured `explanation` object; `llm_reasoning`
+  holds its `overall_assessment`:
+
+```json
+{
+  "overall_assessment": "High-severity HTTP flood from 2 sources; ...",
+  "selected_actions": [
+    {"order": 1, "name": "enable_http_rate_limit", "decision_basis": "model",
+     "confidence": 1.0, "p_necessary": 1.0, "calibration": "L0",
+     "arguments": {"...": "..."}, "parameter_basis": "request_rate=50000 -> 5000 req/min per IP",
+     "rationale": "The attack has a request rate of 50000, so ..."}
+  ],
+  "rejected_actions": [
+    {"name": "share_threat_intel", "decision_basis": "model", "confidence": 1.0,
+     "p_necessary": 0.0, "calibration": "L0", "rationale": "..."}
+  ],
+  "explanation_source": "llm"
+}
+```
+
+  `confidence` is the model's probability for the chosen side (P(necessary)
+  for selected actions, 1 − P for rejected ones, 1.0 for mandatory rules); it is
+  computed by code, never generated. Each `selected_actions[]` entry also carries
+  `confidence` and uses the rationale as `reason`. If generation fails or
+  `JEV_EXPLAIN=false`, rationales fall back to templates
+  (`explanation_source: "template"`).
+
+```bash
+python3 -m venv .venv
+.venv/bin/pip install --index-url https://download.pytorch.org/whl/cpu torch
+.venv/bin/pip install -r server/requirements-jev.txt
+LLM_MODEL=anyjev .venv/bin/python scripts/demo_offline.py HTTP_Flood
+
+# Optional L1 / L2 (per-action temperature / hidden-state head), needs anyjev >= 0.2.
+# 1) labels: Claude Opus + Sonnet (`claude -p`, minimal context) label synthetic
+#    alerts under docs/response_policy.md; a label is kept only where both agree;
+#    20% of alerts are a fixed test split
+.venv/bin/python scripts/jev_teacher_labels.py -n 320 --max-cost 30 --out artifacts/teacher_labels.jsonl
+# 2) fit on the train split, evaluate L0 vs L1 vs L2 on the test split
+LLM_MODEL=anyjev .venv/bin/python scripts/jev_fit.py --labels artifacts/teacher_labels.jsonl \
+    --levels L1,L2 --out artifacts/jev_artifacts.json
+# 3) serve: each question uses its own L2 head, else its L1 temperature, else L0
+LLM_MODEL=anyjev JEV_ARTIFACTS=artifacts/jev_artifacts.json .venv/bin/python scripts/demo_offline.py
+```
+
+Qwen3-4B in bf16 needs ~8 GB of RAM. To run it inside the `server` container,
+build the image with torch + AnyJev and mount the host Hugging Face cache
+(download the weights once on the host first):
+
+```bash
+WITH_JEV=true LLM_MODEL=anyjev docker compose up -d --build db mcp executor server
+```
+
+`./artifacts` is mounted read-only into the container and
+`artifacts/jev_artifacts.json` is loaded at startup. Choose the level with
+`JEV_MAX_LEVEL` (set in `.env`, or override per run) and restart the server —
+no rebuild or refit needed:
+
+```bash
+JEV_MAX_LEVEL=L2 docker compose up -d server   # L2 head where fitted, else L1, else L0
+JEV_MAX_LEVEL=L1 docker compose up -d server   # temperature-calibrated L0 probabilities
+JEV_MAX_LEVEL=L0 docker compose up -d server   # zero-label baseline
+```
+
+The `calibration` field of each action in the response's `explanation` shows
+the level that answered it. After refitting on the host, restart the server to
+load the new artifacts.
+
+The container is capped by `SERVER_MEM_LIMIT` (default `12g`). With Docker
+Desktop's WSL2 backend all containers share the WSL VM's memory (default: half
+of host RAM); raise it with `memory=` in `%UserProfile%\.wslconfig`, then
+`wsl --shutdown`.
+
+### Fine-tuning jobs for the local model (interface; dry run for now)
+
+Fine-tuning Qwen3 is **model maintenance, not an incident response**, so it is
+not in the action catalog: the decision engine never sees it and cannot pick it
+while handling an alert. It has its own API and its own MCP tools
+(`training_start_job`, `training_get_job`). Each job runs in a **detached**
+trainer container beside alert handling, so `/report` never waits on it.
+
+```
+POST /training/jobs ─▶ training_jobs row ─▶ MCP training_start_job ─▶ trainer container (detached)
+GET  /training/jobs/{id} ◀── MCP training_get_job ◀── /jobs/<id>/status.json (shared volume)
+```
+
+```bash
+docker compose build trainer            # ra3-trainer:latest
+curl -X POST localhost:8000/training/jobs -H 'Content-Type: application/json' \
+     -d '{"mode": "dry_run"}'            # 202, runs in the background
+curl localhost:8000/training/jobs        # list and status
+```
+
+* `dry_run` (default) validates the dataset (`artifacts/teacher_labels.jsonl`)
+  and the environment, and writes the training plan (LoRA settings, train/eval
+  split, post-steps). It trains nothing and needs no GPU.
+* `train` fails with an explicit reason until a GPU trainer image exists
+  (torch + transformers + peft; set `TRAINER_GPU=true`). A fine-tuned model has
+  new weights, so the L1/L2 artifacts must be refit (`scripts/jev_fit.py`) and
+  the new model evaluated before it replaces the current one.
+* One job at a time (a second one gets 409). Trigger manually, or automatically
+  every `FINETUNE_TRIGGER_EVERY` reported incidents (0 = manual only).
+* The trainer container has no network and a memory cap (`TRAINER_MEM_LIMIT`);
+  data (`./artifacts`) and the Hugging Face cache are mounted read-only.
+* Run `docker compose` from the project directory: the trainer's host mounts
+  are derived from `$PWD` and `$HOME`.
+
 ## Project layout
 
 ```
@@ -194,6 +318,7 @@ ra3-respond/
 │   ├── main.py               # app entrypoint
 │   ├── router.py             # /report /incidents /actions /health
 │   ├── llm.py                # Claude function-calling decision engine
+│   ├── jev_decider.py        # local-model decision engine (AnyJev, LLM_MODEL=anyjev)
 │   ├── mcp_client.py         # executes selected actions via the MCP server
 │   ├── actions.py            # 9 action tool schemas + metadata
 │   ├── models.py             # SQLAlchemy models (3 tables)
@@ -201,8 +326,10 @@ ra3-respond/
 │   ├── database.py           # async engine + session
 │   └── alembic/              # migrations
 ├── mcp_server/               # MCP server (execution plane)
-│   ├── server.py             # FastMCP: 9 actions exposed as MCP tools
+│   ├── server.py             # FastMCP: 9 actions + 2 training tools as MCP tools
+│   ├── training.py           # launches / tracks detached trainer containers
 │   └── runner.py             # launches one ephemeral executor container/action
+├── trainer/                  # fine-tuning job image (detached, one per job; dry run for now)
 ├── executor/                 # ephemeral executor image (one-shot per action)
 │   ├── execute.py            # entrypoint: run one action, emit JSON, exit
 │   └── handlers.py           # the 9 mock action implementations

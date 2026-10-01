@@ -1,0 +1,15 @@
+upf:
+  pfcp:
+    - dev: veth5
+  gtpu:
+    - dev: veth5
+  subnet:
+    - addr: 10.45.0.1/16
+      dnn: internet
+smf:
+  pfcp:
+    - addr: 192.168.235.3
+parameter:
+max:
+pool:
+time:
